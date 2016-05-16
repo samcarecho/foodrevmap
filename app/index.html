@@ -9,24 +9,25 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<html lang="">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="Polymer Starter Kit" />
-  <title>Polymer Starter Kit</title>
+  <meta name="generator" content="Polymer Starter Kit">
+  <title>Food Revolution Map</title>
+
   <!-- Place favicon.ico in the `app/` directory -->
 
   <!-- Chrome for Android theme color -->
-  <meta name="theme-color" content="#2E3AA1">
+  <meta name="theme-color" content="#ab3636">
 
   <!-- Web Application Manifest -->
   <link rel="manifest" href="manifest.json">
 
   <!-- Tile color for Win8 -->
-  <meta name="msapplication-TileColor" content="#3372DF">
+  <meta name="msapplication-TileColor" content="#ab3636">
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -50,58 +51,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <!-- endbuild -->
 
-  <!-- will be replaced with elements/elements.vulcanized.html -->
+  <!-- Because this project uses vulcanize this should be your only html import
+       in this file. All other imports should go in elements.html -->
   <link rel="import" href="elements/elements.html">
-  <!-- endreplace-->
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
-
 </head>
 
-<body unresolved class="fullbleed layout vertical">
+<body unresolved>
+  <!-- build:remove -->
   <span id="browser-sync-binding"></span>
+  <!-- endbuild -->
+
   <template is="dom-bind" id="app">
 
-    <paper-drawer-panel id="paperDrawerPanel">
+    <paper-drawer-panel id="paperDrawerPanel" force-narrow>
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
 
         <!-- Drawer Toolbar -->
         <paper-toolbar id="drawerToolbar">
-          <span class="paper-font-title">Menu</span>
+          <span class="menu-name">Menu</span>
         </paper-toolbar>
 
         <!-- Drawer Content -->
-        <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="home" href="/" on-click="onDataRouteClick">
-            <iron-icon icon="home"></iron-icon>
-            <span>Home</span>
+        <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
+          <a data-route="maps:pin-drop" href="{{baseUrl}}">
+            <iron-icon icon="map"></iron-icon>
+            <span>Map</span>
           </a>
 
-          <a data-route="users" href="/users" on-click="onDataRouteClick">
+          <a data-route="add-event" href="{{baseUrl}}add-event">
             <iron-icon icon="info"></iron-icon>
-            <span>Users</span>
-          </a>
-
-          <a data-route="contact" href="/contact" on-click="onDataRouteClick">
-            <iron-icon icon="mail"></iron-icon>
-            <span>Contact</span>
+            <span>Add Event</span>
           </a>
         </paper-menu>
       </paper-scroll-header-panel>
 
       <!-- Main Area -->
-      <paper-scroll-header-panel main fixed>
-
+      <paper-scroll-header-panel id="headerPanelMain" main fixed>
         <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar" class="">
+        <paper-toolbar id="mainToolbar" class>
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-          <span class="flex">Food Revolution Map</span>
+
+          <span class="space">Food Revolution Map (Unofficial)</span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="search"></paper-icon-button>
+          <paper-icon-button icon="refresh" on-tap="reloadPage"></paper-icon-button>
+          <!--<paper-icon-button icon="search"></paper-icon-button>-->
 
         </paper-toolbar>
 
@@ -109,56 +107,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="home">
+            <section data-route="map" tabindex="-1">
+              <iron-ajax
+                id="getMarkersData"
+                auto
+                url="/elements/maps-aux/data.json"
+                handle-as="json"
+                on-request="onDataResponse"
+                on-response="onDataResponse"
+                last-response="{{app.markers}}"
+                debounce-duration="300"></iron-ajax>
+              <!--<geo-location latitude="{{lat}}"-->
+                            <!--longitude="{{lng}}"-->
+                            <!--high-accuracy="true"></geo-location>-->
+              <!--<google-maps-api api-key="AIzaSyCGDDwhqVHx25L1nIjJQEtvoizW3VwC2yM" version="3"></google-maps-api>-->
               <google-map map="{{map}}"
                           api-key="AIzaSyCGDDwhqVHx25L1nIjJQEtvoizW3VwC2yM"
-                          fit-to-markers>
-                <!--<template is="dom-repeat" items="{{markers}}">-->
-                  <!--<google-map-marker latitude="{{item.1}}"-->
-                                     <!--longitude="{{item.2}}"-->
-                                     <!--draggable="false"-->
-                                     <!--title="{{item.0}}"-->
-                                     <!--animate="DROP"-->
-                                     <!--icon="/images/marker.png"-->
-
-                  <!--&gt;</google-map-marker>-->
-                <!--</template>-->
+                          zoom="{{mapZoom}}"
+                          latitude="{{lat}}" longitude="{{lng}}"
+                          language="{{lang}}">
               </google-map>
               <google-map-markerclusterer map="{{map}}"
                                           grid-size="60"
                                           minimum-cluster-size="2"
                                           average-center="false"
-                                          styles="{{ markerStyle }}" ></google-map-markerclusterer>
+                                          markers="{{cMarkers}}"
+                                          styles="{{markerStyle}}" ></google-map-markerclusterer>
             </section>
 
-            <section data-route="users">
-              <paper-material elevation="1">
-                <h2 class="page-title">Users</h2>
-                <p>This is the users section</p>
-                <a href="/users/Rob">Rob</a>
-              </paper-material>
-            </section>
-
-            <section data-route="user-info">
-              <paper-material elevation="1">
-                <h2 class="page-title">
-                User:<span>{{params.name}}</span>
-                </h2>
-                <div>This is <span>{{params.name}}</span>'s section</div>
-              </paper-material>
-            </section>
-
-            <section data-route="contact">
-              <paper-material elevation="1">
-                <h2 class="page-title">Contact</h2>
-                <p>This is the contact section</p>
-              </paper-material>
+            <section data-route="add-event" tabindex="-1">
+                <iframe
+                  src="https://docs.google.com/forms/d/1vaXxbTz7NQWZMoNA75Ox_LUeC8q5IMDpy237yDOa4eM/viewform?embedded=true"
+                  width="[[viewportW]]" height="[[viewportH]]"
+                  frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
             </section>
 
           </iron-pages>
         </div>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
+
+    <paper-toast id="toast">
+      <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+    </paper-toast>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
     <!--
@@ -170,6 +161,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <platinum-sw-register auto-register
                           clients-claim
                           skip-waiting
+                          base-uri="bower_components/platinum-sw/bootstrap"
                           on-service-worker-installed="displayInstalledToast">
       <platinum-sw-cache default-cache-strategy="fastest"
                          cache-config-file="cache-config.json">

@@ -10,7 +10,8 @@
     "page": "visionmedia/page.js#~1.6.3",
     "google-web-components": "GoogleWebComponents/google-web-components#^1.0.1",
     "i18n-msg": "^1.0.4",
-    "google-map-markerclusterer": "^1.0.0"
+    "google-map-markerclusterer": "^1.0.0",
+    "geo-location": "^1.0.4"
   },
   "devDependencies": {
     "web-component-tester": "*",

@@ -1,0 +1,94 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+
+
+<dom-module id="marker-info-window">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        width: 200px;
+        height: auto
+      }
+
+      .window-hero {
+        width: 200px;
+      }
+
+      .window-hero img {
+        width: 200px;
+      }
+
+      #description, #date, #address {
+        margin-bottom: 10px;
+      }
+
+      #icons a {
+        margin-left: 15px;
+      }
+
+    </style>
+
+    <div class="window-hero" tabindex="-1">
+      <img src="../../images/infow-hero.png" >
+    </div>
+    <h2>
+      <template is="dom-if" if="{{marker.link}}">
+        <a href="[[marker.link]]" target="_blank">[[marker.title]]</a>
+      </template>
+
+      <template is="dom-if" if="{{!marker.link}}">
+        [[marker.title]]
+      </template>
+    </h2>
+
+    <div id="description">[[marker.description]]</div>
+    <div id="date">[[marker.date]]</div>
+    <div id="address">[[marker.address]]</div>
+
+    <div id="icons" class="layout horizontal">
+      <template is="dom-if" if="{{marker.contact.facebook}}">
+        <a href="https://www.facebook.com/[[marker.contact.facebook]]" class="flex-4" target="_blank">
+          <iron-icon icon="fa:facebook-square"></iron-icon>
+        </a>
+      </template>
+
+      <template is="dom-if" if="{{marker.contact.twitter}}">
+        <a href="https://www.twitter.com/[[marker.contact.twitter]]" class="flex-4" target="_blank">
+          <iron-icon icon="fa:twitter-square"></iron-icon>
+        </a>
+      </template>
+
+      <template is="dom-if" if="{{marker.contact.instagram}}">
+        <a href="https://www.instagram.com/[[marker.contact.instagram]]" class="flex-4" target="_blank">
+          <iron-icon icon="fa:instagram"></iron-icon>
+        </a>
+      </template>
+
+      <template is="dom-if" if="{{marker.contact.email}}">
+        <a href="mailto:[[marker.contact.email]]" class="flex-4" target="_blank">
+          <iron-icon icon="fa:envelope"></iron-icon>
+        </a>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'marker-info-window',
+
+        properties: {
+          marker: {
+            type: Object,
+            value: ''
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>
